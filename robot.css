@@ -1,0 +1,196 @@
+/* ==========================================================================
+   VEE · robot + chat panel (see js/robot.js)
+   ========================================================================== */
+
+:root { --spring: cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* ---------- the robot ---------- */
+.vee {
+  position: fixed; left: 0; top: 0; z-index: 105;
+  width: 72px; height: 89px; padding: 0; margin: 0; border: 0; background: none;
+  cursor: pointer; will-change: transform; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.vee.is-off { pointer-events: none; }
+.vee:focus-visible { outline: none; }
+.vee:focus-visible .vee-float::after { content: ''; position: absolute; inset: -6px -8px; border-radius: 28px; border: 2px solid var(--lime); }
+.vee-float { position: absolute; inset: 0; display: block; will-change: transform; }
+.vee .vee-svg {
+  width: 100%; height: 100%; overflow: visible; stroke: none; display: block;
+  filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 18px rgba(212, 255, 42, 0.12));
+  transition: transform 0.35s var(--spring);
+  transform-origin: 50% 70%;
+}
+.vee:hover .vee-svg { transform: scale(1.08); }
+.vee:active .vee-svg { transform: scale(0.94); transition-duration: 0.1s; }
+
+/* parts snap in from the cursors */
+.vee-part { transform-box: fill-box; transform-origin: center; transition: transform 0.55s var(--spring), opacity 0.22s ease; }
+.vee-part.off { opacity: 0; transform: scale(0.15); transition: transform 0.28s ease-in, opacity 0.2s ease; }
+
+/* inner pivots */
+.vee-headi { transform-box: view-box; transform-origin: 50px 74px; transition: transform 0.2s ease-out; }
+.vee-ant { transform-box: view-box; transform-origin: 50px 23px; }
+.vee-armi { transform-box: view-box; }
+.vee-arm-l .vee-armi { transform-origin: 19.5px 83px; animation: vee-sway-l 3.2s ease-in-out infinite alternate; }
+.vee-arm-r .vee-armi { transform-origin: 80.5px 83px; animation: vee-sway-r 3.2s ease-in-out infinite alternate; }
+@keyframes vee-sway-l { from { transform: rotate(-4deg); } to { transform: rotate(7deg); } }
+@keyframes vee-sway-r { from { transform: rotate(4deg); } to { transform: rotate(-7deg); } }
+.vee.wave .vee-arm-r .vee-armi { animation: vee-wave 0.42s ease-in-out 4 alternate; }
+@keyframes vee-wave { from { transform: rotate(-125deg); } to { transform: rotate(-165deg); } }
+.vee.perched .vee-arm-l .vee-armi { animation: none; transform: rotate(28deg); transition: transform 0.4s var(--spring); }
+.vee.perched .vee-arm-r .vee-armi { animation: none; transform: rotate(-28deg); transition: transform 0.4s var(--spring); }
+.vee.perched.wave .vee-arm-r .vee-armi { animation: vee-wave 0.42s ease-in-out 4 alternate; }
+
+/* face */
+.vee-face { opacity: 0; transition: opacity 0.25s; }
+.vee.awake .vee-face { opacity: 1; }
+.vee.boot .vee-face { animation: vee-boot 0.65s steps(2, end); }
+@keyframes vee-boot { 0% { opacity: 0; } 30% { opacity: 1; } 45% { opacity: 0.2; } 60%, 100% { opacity: 1; } }
+.vee-eyes { transition: transform 0.08s linear; }
+.vee-eye { transform-box: fill-box; transform-origin: center; transition: transform 0.09s ease, opacity 0.15s; }
+.vee-eye-happy { opacity: 0; transition: opacity 0.15s; }
+.vee-cheek { opacity: 0.38; transition: opacity 0.3s; }
+.vee-mouth { opacity: 0; transform-box: fill-box; transform-origin: center; }
+.vee-smile { transition: opacity 0.15s; }
+.vee.blink .vee-eye { transform: scaleY(0.12); }
+.vee.happy .vee-eye { opacity: 0; }
+.vee.happy .vee-eye-happy { opacity: 1; }
+.vee.happy .vee-cheek { opacity: 0.75; }
+.vee.surprised .vee-eye { transform: scale(1.25); }
+.vee.surprised .vee-smile { opacity: 0; }
+.vee.surprised .vee-mouth { opacity: 1; transform: scale(0.8, 1.3); }
+.vee.listen .vee-eye { transform: scale(1.18); }
+.vee.listen .vee-bulb { fill: #ff4fa3; animation: vee-pulse 0.7s ease-in-out infinite; }
+.vee.think .vee-eye { transform: scaleY(0.75); }
+.vee.think .vee-bulb { fill: #5fd4f4; animation: vee-pulse 0.45s ease-in-out infinite; }
+.vee.talk .vee-smile { opacity: 0; }
+.vee.talk .vee-mouth { opacity: 1; animation: vee-talk 0.16s ease-in-out infinite alternate; }
+@keyframes vee-talk { from { transform: scale(1, 0.35); } to { transform: scale(1.05, 1.25); } }
+.vee-bulb { transform-box: fill-box; transform-origin: center; transition: fill 0.3s; }
+@keyframes vee-pulse { 50% { transform: scale(1.35); opacity: 0.6; } }
+.vee-core { animation: vee-core 2.4s ease-in-out infinite; }
+@keyframes vee-core { 50% { opacity: 0.45; } }
+
+/* jet */
+.vee-jet { transform-box: fill-box; transform-origin: 50% 10%; transform: scaleY(var(--jet, 1)); opacity: 0.95; transition: opacity 0.3s; }
+.vee-flame { animation: vee-flicker 0.14s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 0%; }
+.vee-jet-glow { animation: vee-core 1.2s ease-in-out infinite; }
+@keyframes vee-flicker { from { transform: scale(0.82, 0.86); opacity: 0.8; } to { transform: scale(1.06, 1.12); opacity: 1; } }
+.vee.is-off .vee-jet, .vee.is-building .vee-jet, .vee.perched .vee-jet { opacity: 0; }
+
+/* one-off moves */
+.vee.land .vee-float { animation: vee-land 0.42s var(--spring); }
+@keyframes vee-land { 0% { transform: scale(1.06, 0.86) translateY(4px); } 100% { transform: none; } }
+.vee.spin .vee-svg { animation: vee-spin 1s var(--ease); }
+@keyframes vee-spin { 0% { transform: rotate(0); } 35% { transform: translateY(-14px) rotate(0); } 75% { transform: translateY(-14px) rotate(360deg); } 100% { transform: rotate(360deg); } }
+
+/* sparks when a cursor clicks into place, ring when the team leaves */
+.vee-fx { position: absolute; inset: 0; pointer-events: none; }
+.vee-fx i { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; border: 2px solid var(--sc); box-shadow: 0 0 12px var(--sc); animation: vee-spark 0.6s ease-out forwards; }
+@keyframes vee-spark { from { transform: scale(0.4); opacity: 1; } to { transform: scale(3.4); opacity: 0; } }
+.vee-fx b { position: absolute; left: 50%; top: 55%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; border: 2px dashed rgba(212, 255, 42, 0.8); animation: vee-ring 0.55s ease-out forwards; }
+@keyframes vee-ring { from { transform: scale(0.6) rotate(0); opacity: 1; } to { transform: scale(4) rotate(90deg); opacity: 0; } }
+
+/* the build cursors fade into the robot as they dock */
+.b-cursor svg, .b-cursor .tag { transition: transform 0.25s ease, opacity 0.25s ease; }
+.b-cursor.docked { opacity: 0 !important; }
+.b-cursor.docked svg, .b-cursor.docked .tag { transform: scale(0.2); }
+
+/* ---------- speech bubble ---------- */
+.vee-bubble {
+  position: fixed; left: 0; top: 0; z-index: 104; max-width: 250px; padding: 11px 13px 10px; text-align: left;
+  border: 0; border-radius: 14px 14px 4px 14px; background: #f4f5f7; color: #0b0c10; font: inherit; font-size: 13px; line-height: 1.42;
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.6); cursor: pointer;
+  opacity: 0; scale: 0.85; transform-origin: 100% 100%; transition: opacity 0.22s ease, scale 0.32s var(--spring);
+}
+.vee-bubble.from-right { border-radius: 14px 14px 14px 4px; transform-origin: 0 100%; }
+.vee-bubble.on { opacity: 1; scale: 1; }
+.vee-bubble[hidden] { display: none; }
+.vee-bubble-text { display: block; }
+.vee-bubble-cta { display: inline-block; margin-top: 6px; font-size: 11.5px; font-weight: 700; color: #3a5d00; }
+.vee-bubble:hover .vee-bubble-cta { text-decoration: underline; }
+
+/* ---------- chat panel ---------- */
+.vee-panel {
+  position: fixed; right: 20px; bottom: 20px; z-index: 100;
+  width: min(392px, calc(100vw - 32px)); height: min(600px, calc(100svh - 130px));
+  display: flex; flex-direction: column;
+  background: rgba(12, 14, 20, 0.96); border: 1px solid var(--line-2); border-radius: 20px;
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(212, 255, 42, 0.05), 0 0 60px -30px rgba(212, 255, 42, 0.35);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  opacity: 0; transform: translateY(18px) scale(0.96); transform-origin: 100% 100%;
+  transition: opacity 0.22s ease, transform 0.4s var(--spring);
+}
+.vee-panel.on { opacity: 1; transform: none; }
+.vee-panel[hidden] { display: none; }
+
+.vee-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 12px 12px 96px; border-bottom: 1px solid var(--line); min-height: 62px; }
+.vee-id h2 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 22px; letter-spacing: 0.02em; line-height: 1; text-transform: uppercase; }
+.vee-id h2 small { font-family: var(--font-body); text-transform: none; font-size: 11.5px; color: var(--muted); letter-spacing: 0; margin-left: 4px; }
+.vee-id { min-width: 0; }
+.vee-id p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 5px 0 0; display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: #aeb3bd; }
+.vee-tools { display: flex; gap: 2px; }
+.vee-ic { width: 34px; height: 34px; display: grid; place-items: center; border: 0; border-radius: 9px; background: none; color: #aeb3bd; flex-shrink: 0; }
+.vee-ic svg { width: 17px; height: 17px; }
+.vee-ic:hover { background: rgba(255, 255, 255, 0.07); color: #fff; }
+.vee-ic[aria-pressed='true'] { color: var(--lime); background: rgba(212, 255, 42, 0.1); }
+.vee-ic[hidden] { display: none; }
+
+.vee-log { flex: 1; overflow-y: auto; padding: 16px 14px 8px; display: flex; flex-direction: column; gap: 10px; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.15) transparent; }
+.vee-msg { display: flex; flex-direction: column; max-width: 88%; animation: vee-msg-in 0.35s var(--ease) both; }
+@keyframes vee-msg-in { from { opacity: 0; transform: translateY(8px) scale(0.98); } }
+.vee-msg.me { align-self: flex-end; align-items: flex-end; }
+.vee-msg.bot { align-self: flex-start; }
+.vee-b { padding: 10px 13px; border-radius: 16px; font-size: 13.8px; line-height: 1.55; overflow-wrap: anywhere; }
+.vee-msg.me .vee-b { background: var(--lime); color: var(--lime-ink); border-bottom-right-radius: 5px; font-weight: 500; white-space: pre-wrap; }
+.vee-msg.bot .vee-b { background: #161a24; border: 1px solid rgba(255, 255, 255, 0.06); color: #e8eaee; border-bottom-left-radius: 5px; }
+.vee-b p { margin: 0; }
+.vee-b p + p, .vee-b p + ul, .vee-b ul + p { margin-top: 8px; }
+.vee-b ul { margin: 4px 0 0; padding-left: 18px; }
+.vee-b li { margin: 3px 0; }
+.vee-b li::marker { color: var(--lime); }
+.vee-b b { color: #fff; font-weight: 600; }
+.vee-msg.me .vee-b b { color: inherit; }
+.vee-b a { color: var(--lime); text-decoration: underline; text-underline-offset: 2px; }
+.vw { opacity: 0; animation: vee-word 0.32s var(--ease) forwards; animation-delay: calc(var(--i) * var(--step, 30ms)); }
+@keyframes vee-word { from { opacity: 0; filter: blur(3px); transform: translateY(2px); } to { opacity: 1; filter: none; transform: none; } }
+.vw { display: inline-block; }
+
+.vee-msg.typing .vee-b { display: flex; gap: 5px; padding: 13px 15px; }
+.vee-msg.typing i { width: 7px; height: 7px; border-radius: 50%; background: #8b909b; animation: vee-dot 1s ease-in-out infinite; }
+.vee-msg.typing i:nth-child(2) { animation-delay: 0.15s; }
+.vee-msg.typing i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes vee-dot { 0%, 60%, 100% { transform: translateY(0); opacity: 0.45; } 30% { transform: translateY(-5px); opacity: 1; background: var(--lime); } }
+
+.vee-acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; animation: vee-msg-in 0.35s var(--ease) both; animation-delay: var(--d, 0ms); }
+.vee-act { display: inline-flex; align-items: center; padding: 6px 11px; border-radius: 999px; border: 1px solid rgba(212, 255, 42, 0.35); background: rgba(212, 255, 42, 0.07); color: var(--lime); font-size: 12px; font-weight: 600; transition: background 0.2s, color 0.2s; }
+.vee-act:hover { background: var(--lime); color: var(--lime-ink); }
+
+.vee-chips { display: flex; gap: 6px; padding: 4px 14px 10px; overflow-x: auto; scrollbar-width: none; flex-shrink: 0; min-height: 4px; }
+.vee-chips::-webkit-scrollbar { display: none; }
+.vee-chip { flex-shrink: 0; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line-2); background: rgba(255, 255, 255, 0.03); color: #d8dbe0; font-size: 12.5px; white-space: nowrap; animation: vee-msg-in 0.35s var(--ease) both; animation-delay: calc(var(--i) * 60ms); transition: border-color 0.2s, color 0.2s, background 0.2s; }
+.vee-chip:hover { border-color: var(--lime); color: var(--lime); background: rgba(212, 255, 42, 0.06); }
+
+.vee-form { display: flex; align-items: flex-end; gap: 6px; margin: 0 12px; padding: 6px 6px 6px 14px; border: 1px solid var(--line-2); border-radius: 16px; background: #0a0c12; transition: border-color 0.2s, box-shadow 0.2s; }
+.vee-form:focus-within { border-color: rgba(212, 255, 42, 0.6); box-shadow: 0 0 0 3px rgba(212, 255, 42, 0.1); }
+.vee-form textarea { flex: 1; min-width: 0; resize: none; border: 0; background: none; color: var(--text); font: inherit; font-size: 14px; line-height: 1.45; padding: 7px 0; max-height: 112px; outline: none; overflow-y: hidden; white-space: pre-wrap; }
+.vee-form textarea::placeholder { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vee-form textarea::placeholder { color: #6b707b; }
+.vee-mic.on { color: #fff; background: #ff3b5c; animation: vee-mic 1.2s ease-out infinite; }
+@keyframes vee-mic { 0% { box-shadow: 0 0 0 0 rgba(255, 59, 92, 0.55); } 100% { box-shadow: 0 0 0 10px rgba(255, 59, 92, 0); } }
+.vee-send { width: 36px; height: 36px; flex-shrink: 0; display: grid; place-items: center; border: 0; border-radius: 11px; background: var(--lime); color: var(--lime-ink); transition: transform 0.2s var(--spring); }
+.vee-send svg { width: 16px; height: 16px; }
+.vee-send:hover { transform: scale(1.07) rotate(-8deg); }
+.vee-note { margin: 0; padding: 8px 16px 12px; font-size: 10.5px; color: #6b707b; text-align: center; }
+
+@media (max-width: 640px) {
+  .vee { width: 60px; height: 74px; }
+  .vee-panel { right: 8px; left: 8px; bottom: 8px; width: auto; height: min(78svh, 640px); border-radius: 18px; }
+  .vee-head { padding-left: 84px; }
+  .vee-id h2 small { display: none; }
+  .vee-bubble { max-width: min(230px, calc(100vw - 100px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vee-arm-l .vee-armi, .vee-arm-r .vee-armi, .vee-flame, .vee-jet-glow, .vee-core { animation: none !important; }
+}

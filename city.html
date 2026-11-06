@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Vedanth's City | Drive through Vedanth Raj's journey</title>
+    <meta name="description" content="Game mode of Vedanth Raj's portfolio: hold to drive through a cinematic neon city built from his education, skills, projects, achievements, experience and certifications." />
+    <meta name="theme-color" content="#120a1f" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23140a22'/%3E%3Ctext x='50%25' y='58%25' text-anchor='middle' dominant-baseline='middle' font-family='Impact,Arial Narrow,sans-serif' font-size='34' fill='%23ff3fa4'%3EV%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+    <link rel="preload" as="image" href="/city/01.webp" />
+    <link rel="stylesheet" href="/city.css" />
+  </head>
+  <body data-phase="loading">
+    <!-- the film: two clips double-buffered, overlays keyed to film time -->
+    <div class="stage" id="stage" aria-hidden="true">
+      <video class="clip on" id="va" playsinline muted preload="auto" disablepictureinpicture></video>
+      <video class="clip" id="vb" playsinline muted preload="auto" disablepictureinpicture></video>
+      <div class="world" id="world"></div>
+      <div class="fx-vignette"></div>
+      <div class="fx-flash" id="flash"></div>
+    </div>
+    <div class="bars" aria-hidden="true"><i></i><i></i></div>
+
+    <!-- loader -->
+    <div class="loader" id="loader">
+      <div class="ld-bg" aria-hidden="true"></div>
+      <div class="ld-inner">
+        <p class="ld-kicker">Vedanth Raj · portfolio · game mode</p>
+        <h1 class="ld-logo">Vedanth's <span>City</span></h1>
+        <p class="ld-sub">A cinematic drive through one engineer's journey</p>
+        <div class="ld-bar" role="progressbar" aria-label="Loading the city" aria-valuemin="0" aria-valuemax="100"><i id="load-bar"></i></div>
+        <p class="ld-msg" id="load-msg" aria-live="polite">Fuelling the car…</p>
+        <div class="ld-acts">
+          <button type="button" class="btn-neon" id="start" hidden>Enter the city <small>with sound</small></button>
+          <button type="button" class="btn-ghost" id="start-quiet" hidden>Enter quietly</button>
+        </div>
+        <ul class="ld-keys">
+          <li>Auto-drive is on · <kbd>A</kbd> to take the wheel</li>
+          <li><kbd>Hold</kbd> or <kbd>Space</kbd> to drive yourself</li>
+          <li><kbd>←</kbd><kbd>→</kbd> jump between districts</li>
+        </ul>
+        <a class="ld-back" href="/">← Back to the classic portfolio</a>
+      </div>
+    </div>
+
+    <!-- HUD -->
+    <header class="hud-top">
+      <a class="brand" href="/" aria-label="Back to the portfolio">←&nbsp;<b>Vedanth's City</b></a>
+      <div class="top-acts">
+        <button type="button" class="chip" id="skip">Skip intro ▸</button>
+        <button type="button" class="chip" id="auto" aria-pressed="true" title="Auto-drive (A)">Auto-drive</button>
+        <button type="button" class="chip" id="sound" aria-pressed="false" title="Sound (M)">♪ Sound off</button>
+        <a class="chip" href="/">Classic view</a>
+      </div>
+    </header>
+
+    <div class="vee" id="vee" aria-live="polite">
+      <span class="vee-face" aria-hidden="true"><i></i><i></i></span>
+      <p><b>Vee</b><span id="vee-line">Hi! I'm your co-pilot.</span></p>
+    </div>
+
+    <div class="hold" id="hold" aria-hidden="true">
+      <span class="hold-ring"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" /><circle class="hold-fill" id="hold-fill" cx="22" cy="22" r="19" /></svg><b>▲</b></span>
+      <span class="hold-txt"><b>Hold to drive</b><small>mouse · touch · <kbd>Space</kbd></small></span>
+    </div>
+
+    <div class="hud-bottom">
+      <div class="gauges">
+        <svg class="map" id="map" viewBox="0 0 160 160" aria-hidden="true"></svg>
+        <div class="speed" id="speed"><b>0</b><small>km/h</small></div>
+      </div>
+      <nav class="rail" id="rail" aria-label="Districts"></nav>
+    </div>
+
+    <!-- district card (shown when the car stops in a district) -->
+    <aside class="card" id="card" hidden aria-labelledby="card-title">
+      <div class="card-in">
+        <header class="card-head"></header>
+        <div class="card-body"></div>
+        <footer class="card-foot">
+          <button type="button" class="btn-neon" id="card-next">Continue driving ▸</button>
+          <span class="card-hint" id="card-hint">or hold anywhere</span>
+        </footer>
+      </div>
+    </aside>
+
+    <!-- detail modal (projects, certificates) -->
+    <div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-label="Details">
+      <div class="modal-card"><button type="button" class="modal-x" aria-label="Close">✕</button><div class="modal-body"></div></div>
+    </div>
+
+    <p class="rotate" id="rotate" hidden>Tip: turn your phone sideways for the full city</p>
+    <p class="sr-only" id="announce" aria-live="polite"></p>
+
+    <noscript><p class="noscript">Vedanth's City needs JavaScript. <a href="/">Open the classic portfolio</a>.</p></noscript>
+    <script type="module" src="/js/city/main.js"></script>
+  </body>
+</html>

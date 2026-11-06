@@ -1,0 +1,23 @@
+# dependencies and build output
+node_modules/
+dist/
+
+# the film for Vedanth's City (~270 MB of 1080p clips). It is served from the live site:
+#   https://portfolio.d26tlmboyckuka.amplifyapp.com/city/{av1,hd,m}/NN.mp4
+public/city/av1/
+public/city/hd/
+public/city/m/
+
+# source footage, reference photos and generation notes (not needed to build the site)
+city-assets/
+
+# optional chatbot backend (not deployed; the live chatbot runs fully in the browser)
+server/
+
+# local tooling and leftovers
+.claude/
+_previous-design/
+cloudfront-config.json
+*.code-workspace
+.DS_Store
+Thumbs.db

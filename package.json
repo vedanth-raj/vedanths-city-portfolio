@@ -1,0 +1,18 @@
+{
+  "name": "smooth-scroll-animation",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5173 --host",
+    "build": "vite build",
+    "preview": "vite preview",
+    "profile": "node server/build-profile.mjs"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  },
+  "dependencies": {
+    "three": "^0.170.0"
+  }
+}
